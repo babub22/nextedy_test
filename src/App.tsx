@@ -82,7 +82,7 @@ function App() {
             {(loading && !selectedStocks) ? (
                 <div>Loading...</div>
             ) : (
-                selectedStocks && <StocksInfo selectedStocks={selectedStocks} />
+                <StocksInfo selectedStocks={selectedStocks ? selectedStocks : stocks} />
             )}
         </div>
     );
@@ -107,17 +107,23 @@ function useFetchStocks() {
 
     useEffect(() => {
         async function fetchStockList() {
-            try {
-                const response = await new Promise(resolve => setTimeout(() => resolve(genMockStocks()), 10000)) as StockTable;
+            while (true) {
+                try {
+                    const response = await new Promise(resolve => setTimeout(() => resolve(genMockStocks()), 10000)) as StockTable;
 
-                setResult(response);
-                setLoading(false);
-            } catch (err) {
-                if (err instanceof Error) {
-                    setError(err);
+                    setResult(response);
+                    setLoading(false);
+                } catch (err) {
+                    if (err instanceof Error) {
+                        setError(err);
+                    }
+
+                    setLoading(false);
+
+                    break;
                 }
 
-                setLoading(false);
+                console.log("fetched")
             }
         }
 
